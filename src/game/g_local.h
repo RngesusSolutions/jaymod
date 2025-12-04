@@ -113,6 +113,45 @@ typedef enum {
 #define	AAS_AREA_TEAM_AXIS_DISGUISED		0x0080
 #define	AAS_AREA_TEAM_ALLIES_DISGUISED		0x0100
 
+// Referee levels
+typedef enum {
+	RL_NONE = 0,
+	RL_REFEREE,
+	RL_RCON
+} refLevelType;
+
+// Server settings flags (bitfield)
+#define CV_SVS_PAUSE			(1 << 0)
+#define CV_SVS_LOCKTEAMS		(1 << 1)
+#define CV_SVS_LOCKSPECS		(1 << 2)
+#define CV_SVS_MUTESPECS		(1 << 3)
+#define CV_SVS_FRIENDLYFIRE		(1 << 4)
+#define CV_SVS_ANTILAG			(1 << 5)
+#define CV_SVS_BALANCEDTEAMS	(1 << 6)
+#define CV_SVS_WARMUPDMG		(1 << 7)
+#define CV_SVS_NEXTMAP			(1 << 8)
+
+// Vote flags (bitfield)
+#define CV_SVF_COMP				(1 << 0)
+#define CV_SVF_GAMETYPE			(1 << 1)
+#define CV_SVF_KICK				(1 << 2)
+#define CV_SVF_MAP				(1 << 3)
+#define CV_SVF_MATCHRESET		(1 << 4)
+#define CV_SVF_MUTESPECS		(1 << 5)
+#define CV_SVF_NEXTMAP			(1 << 6)
+#define CV_SVF_PUB				(1 << 7)
+#define CV_SVF_REFEREE			(1 << 8)
+#define CV_SVF_SHUFFLETEAMS		(1 << 9)
+#define CV_SVF_SWAPTEAMS		(1 << 10)
+#define CV_SVF_FRIENDLYFIRE		(1 << 11)
+#define CV_SVF_TIMELIMIT		(1 << 12)
+#define CV_SVF_WARMUPDAMAGE		(1 << 13)
+#define CV_SVF_BALANCEDTEAMS	(1 << 14)
+#define CV_SVF_MUTING			(1 << 15)
+#define CV_SVF_GENERIC			(1 << 16)
+#define CV_SVF_MATCHRESTART		(1 << 17)
+#define CV_SVF_STARTMATCH		(1 << 18)
+
 //============================================================================
 
 // Jaybird - antiwarp defines

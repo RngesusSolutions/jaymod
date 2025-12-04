@@ -1,0 +1,38 @@
+# CMake build directories
+build/
+build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+
+# Make build artifacts
+*.o
+*.so
+*.dll
+*.dylib
+*.a
+*.pk3
+
+# Compiled binaries
+qagame*.so
+cgame*.so
+ui*.so
+qagame*.dll
+cgame*.dll
+ui*.dll
+
+# Python bytecode
+*.pyc
+__pycache__/
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
