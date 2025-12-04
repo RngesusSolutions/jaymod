@@ -18,7 +18,7 @@ GCC/ = /opt/gcc-4.1.2-mingw/i686-mingw32/
 CXX.opt.PIC =
 CXX.opt.vis =
 
-CXX.ldopts.so = -shared
+CXX.ldopts.so = -shared -static-libgcc -static-libstdc++
 
 ###############################################################################
 
