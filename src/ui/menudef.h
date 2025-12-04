@@ -42,6 +42,11 @@
 #define FEEDER_FINDPLAYER			0x0e	// find player
 #define FEEDER_CINEMATICS			0x0f	// cinematics
 
+// Referee level constants
+#define RL_NONE					0
+#define RL_REFEREE				1
+#define RL_RCON					2
+
 // CS_SERVERTOGGLES
 #define CV_SVS_MUTESPECS		1
 #define CV_SVS_FRIENDLYFIRE		2
