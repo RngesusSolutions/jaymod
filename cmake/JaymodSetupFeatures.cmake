@@ -2,15 +2,8 @@
 # Feature Setup
 #-----------------------------------------------------------------
 
-include(CMakeDependentOption)
-
-# Omnibot support - enabled by default on Linux and Windows (not MinGW unless forced)
-cmake_dependent_option(FEATURE_OMNIBOT
-    "Enable Omni-bot support for qagame module"
-    ON
-    "(NOT MINGW AND WIN32) OR CMAKE_SYSTEM_NAME MATCHES Linux OR FORCE_OMNIBOT"
-    OFF
-)
+# Omnibot support - enabled by default, can be overridden by workflow
+option(FEATURE_OMNIBOT "Enable Omni-bot support for qagame module" ON)
 
 if(FEATURE_OMNIBOT)
     message(STATUS "Omni-bot support: ENABLED")
