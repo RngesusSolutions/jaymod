@@ -83,7 +83,7 @@ static void CG_BotDebugRadius(vec3_t pos, vec3_t info, vec3_t color)
 	}
 }
 
-static char *ks_messages[] = {
+static const char *ks_messages[] = {
 	"^2Killing Spree!^7",
 	"^2Rampage!^7",
 	"^2Dominating!^7",
@@ -92,7 +92,7 @@ static char *ks_messages[] = {
 	"^2Wicked Sick!^7",
 };
 
-static char *ls_messages[] = {
+static const char *ls_messages[] = {
 	"^1Losing Spree!^7",
 	"^1You Suck!^7",
 	"^1You REALLY Suck!^7",
@@ -134,9 +134,9 @@ static void CG_Obituary( entityState_t *ent ) {
 	int			mod;
 	int			flags = 0;
 	int			target, attacker;
-	char		*message;
-	char		*message2;
-	char		*teamkill = "";
+	const char		*message;
+	const char		*message2;
+	const char		*teamkill = "";
 	char		targetName[32];
 	char		attackerName[32];
 	clientInfo_t	*ci, *ca; // JPW NERVE ca = attacker

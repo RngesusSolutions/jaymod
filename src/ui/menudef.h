@@ -25,6 +25,23 @@
 #define HUD_VERTICAL		0x00
 #define HUD_HORIZONTAL		0x01
 
+// Feeder constants
+#define FEEDER_MAPS 				0x01	// text maps based on game type
+#define FEEDER_SERVERS				0x02	// servers
+#define FEEDER_CLANS				0x03	// clan names
+#define FEEDER_ALLMAPS				0x04	// all maps available, in graphic format
+#define FEEDER_REDTEAM_LIST 		0x05	// red team members
+#define FEEDER_BLUETEAM_LIST		0x06	// blue team members
+#define FEEDER_PLAYER_LIST			0x07	// players
+#define FEEDER_TEAM_LIST			0x08	// team members for team voting
+#define FEEDER_MODS 				0x09	// team members for team voting
+#define FEEDER_DEMOS				0x0a	// team members for team voting
+#define FEEDER_SCOREBOARD			0x0b	// team members for team voting
+#define FEEDER_Q3HEADS				0x0c	// model heads
+#define FEEDER_SERVERSTATUS 		0x0d	// server status
+#define FEEDER_FINDPLAYER			0x0e	// find player
+#define FEEDER_CINEMATICS			0x0f	// cinematics
+
 // CS_SERVERTOGGLES
 #define CV_SVS_MUTESPECS		1
 #define CV_SVS_FRIENDLYFIRE		2
