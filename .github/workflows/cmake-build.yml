@@ -1,0 +1,226 @@
+name: Jaymod CMake Build
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+  workflow_dispatch:
+
+jobs:
+  build-linux-32bit:
+    name: Linux 32-bit
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install 32-bit dependencies
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get install -y \
+          cmake \
+          build-essential \
+          gcc-multilib \
+          g++-multilib \
+          libc6-dev-i386 \
+          ninja-build
+
+    - name: Configure CMake (32-bit)
+      run: |
+        cmake -B build-linux-i386 \
+          -G Ninja \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DCROSS_COMPILE32=ON \
+          -DFEATURE_OMNIBOT=ON \
+          -DFEATURE_LUA=ON
+
+    - name: Build
+      run: cmake --build build-linux-i386 --config ${{ matrix.build_type }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: jaymod-linux-i386-${{ matrix.build_type }}
+        path: |
+          build-linux-i386/jaymod-*/*.so
+          build-linux-i386/jaymod-*/jaymod-*.pk3
+        retention-days: 30
+
+  build-linux-64bit:
+    name: Linux 64-bit
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          cmake \
+          build-essential \
+          ninja-build
+
+    - name: Configure CMake (64-bit)
+      run: |
+        cmake -B build-linux-x86_64 \
+          -G Ninja \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DCROSS_COMPILE32=OFF \
+          -DFEATURE_OMNIBOT=ON \
+          -DFEATURE_LUA=ON
+
+    - name: Build
+      run: cmake --build build-linux-x86_64 --config ${{ matrix.build_type }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: jaymod-linux-x86_64-${{ matrix.build_type }}
+        path: |
+          build-linux-x86_64/jaymod-*/*.so
+          build-linux-x86_64/jaymod-*/jaymod-*.pk3
+        retention-days: 30
+
+  build-windows-32bit:
+    name: Windows 32-bit (MinGW)
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install MinGW 32-bit
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get install -y \
+          cmake \
+          ninja-build \
+          gcc-mingw-w64-i686 \
+          g++-mingw-w64-i686 \
+          mingw-w64-tools
+
+    - name: Create MinGW toolchain file
+      run: |
+        cat > mingw-w64-i686.cmake << 'EOF'
+        set(CMAKE_SYSTEM_NAME Windows)
+        set(CMAKE_SYSTEM_PROCESSOR i686)
+
+        set(CMAKE_C_COMPILER i686-w64-mingw32-gcc)
+        set(CMAKE_CXX_COMPILER i686-w64-mingw32-g++)
+        set(CMAKE_RC_COMPILER i686-w64-mingw32-windres)
+        set(CMAKE_AR i686-w64-mingw32-ar)
+        set(CMAKE_RANLIB i686-w64-mingw32-ranlib)
+
+        set(CMAKE_FIND_ROOT_PATH /usr/i686-w64-mingw32)
+        set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+        set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+        set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+        set(CMAKE_SHARED_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+        set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+        EOF
+
+    - name: Configure CMake (MinGW 32-bit)
+      run: |
+        cmake -B build-win32 \
+          -G Ninja \
+          -DCMAKE_TOOLCHAIN_FILE=mingw-w64-i686.cmake \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DCROSS_COMPILE32=ON \
+          -DFEATURE_OMNIBOT=OFF \
+          -DFEATURE_LUA=ON
+
+    - name: Build
+      run: cmake --build build-win32 --config ${{ matrix.build_type }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: jaymod-win32-${{ matrix.build_type }}
+        path: |
+          build-win32/jaymod-*/*.dll
+          build-win32/jaymod-*/jaymod-*.pk3
+        retention-days: 30
+
+  build-windows-64bit:
+    name: Windows 64-bit (MinGW)
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install MinGW 64-bit
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          cmake \
+          ninja-build \
+          gcc-mingw-w64-x86-64 \
+          g++-mingw-w64-x86-64 \
+          mingw-w64-tools
+
+    - name: Create MinGW toolchain file
+      run: |
+        cat > mingw-w64-x86-64.cmake << 'EOF'
+        set(CMAKE_SYSTEM_NAME Windows)
+        set(CMAKE_SYSTEM_PROCESSOR x86_64)
+
+        set(CMAKE_C_COMPILER x86_64-w64-mingw32-gcc)
+        set(CMAKE_CXX_COMPILER x86_64-w64-mingw32-g++)
+        set(CMAKE_RC_COMPILER x86_64-w64-mingw32-windres)
+        set(CMAKE_AR x86_64-w64-mingw32-ar)
+        set(CMAKE_RANLIB x86_64-w64-mingw32-ranlib)
+
+        set(CMAKE_FIND_ROOT_PATH /usr/x86_64-w64-mingw32)
+        set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+        set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+        set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+        set(CMAKE_SHARED_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+        set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+        EOF
+
+    - name: Configure CMake (MinGW 64-bit)
+      run: |
+        cmake -B build-win64 \
+          -G Ninja \
+          -DCMAKE_TOOLCHAIN_FILE=mingw-w64-x86-64.cmake \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DCROSS_COMPILE32=OFF \
+          -DFEATURE_OMNIBOT=OFF \
+          -DFEATURE_LUA=ON
+
+    - name: Build
+      run: cmake --build build-win64 --config ${{ matrix.build_type }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: jaymod-win64-${{ matrix.build_type }}
+        path: |
+          build-win64/jaymod-*/*.dll
+          build-win64/jaymod-*/jaymod-*.pk3
+        retention-days: 30
