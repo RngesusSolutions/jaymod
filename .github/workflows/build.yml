@@ -43,19 +43,19 @@ jobs:
         if [ -z "${{ matrix.variant }}" ]; then
           echo "Building default variant..."
           make clean
-          make all
+          make 'CXX.opt.std=-fno-exceptions -fno-rtti -std=gnu++03' all
         else
           echo "Building ${{ matrix.variant }} variant..."
           make VARIANT=${{ matrix.variant }} clean
-          make VARIANT=${{ matrix.variant }} all
+          make VARIANT=${{ matrix.variant }} 'CXX.opt.std=-fno-exceptions -fno-rtti -std=gnu++03' all
         fi
 
     - name: Create package
       run: |
         if [ -z "${{ matrix.variant }}" ]; then
-          make pkg || echo "Package creation failed or not applicable"
+          make 'CXX.opt.std=-fno-exceptions -fno-rtti -std=gnu++03' pkg || echo "Package creation failed or not applicable"
         else
-          make VARIANT=${{ matrix.variant }} pkg || echo "Package creation failed or not applicable"
+          make VARIANT=${{ matrix.variant }} 'CXX.opt.std=-fno-exceptions -fno-rtti -std=gnu++03' pkg || echo "Package creation failed or not applicable"
         fi
 
     - name: Upload artifacts
@@ -121,19 +121,19 @@ jobs:
         if [ -z "${{ matrix.variant }}" ]; then
           echo "Building Windows 32-bit default variant via MinGW..."
           make PLATFORM=mingw GCC/=/opt/mingw32/ clean
-          make PLATFORM=mingw GCC/=/opt/mingw32/ all
+          make PLATFORM=mingw GCC/=/opt/mingw32/ 'CXX.opt.std=-fno-exceptions -fno-rtti -std=gnu++03' all
         else
           echo "Building Windows 32-bit ${{ matrix.variant }} variant via MinGW..."
           make PLATFORM=mingw VARIANT=${{ matrix.variant }} GCC/=/opt/mingw32/ clean
-          make PLATFORM=mingw VARIANT=${{ matrix.variant }} GCC/=/opt/mingw32/ all
+          make PLATFORM=mingw VARIANT=${{ matrix.variant }} GCC/=/opt/mingw32/ 'CXX.opt.std=-fno-exceptions -fno-rtti -std=gnu++03' all
         fi
 
     - name: Create package
       run: |
         if [ -z "${{ matrix.variant }}" ]; then
-          make PLATFORM=mingw GCC/=/opt/mingw32/ pkg || echo "Package creation failed or not applicable"
+          make PLATFORM=mingw GCC/=/opt/mingw32/ 'CXX.opt.std=-fno-exceptions -fno-rtti -std=gnu++03' pkg || echo "Package creation failed or not applicable"
         else
-          make PLATFORM=mingw VARIANT=${{ matrix.variant }} GCC/=/opt/mingw32/ pkg || echo "Package creation failed or not applicable"
+          make PLATFORM=mingw VARIANT=${{ matrix.variant }} GCC/=/opt/mingw32/ 'CXX.opt.std=-fno-exceptions -fno-rtti -std=gnu++03' pkg || echo "Package creation failed or not applicable"
         fi
 
     - name: Upload artifacts
