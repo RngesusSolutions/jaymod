@@ -74,6 +74,28 @@ set(COMMON_INCLUDES
 )
 
 #-----------------------------------------------------------------
+# Generate Project Header
+#-----------------------------------------------------------------
+
+# Generate base/project.h from project/info.py at configure time
+find_package(Python3 REQUIRED)
+
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/base)
+
+execute_process(
+    COMMAND ${Python3_EXECUTABLE} info.py -h
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/project
+    OUTPUT_FILE ${CMAKE_BINARY_DIR}/base/project.h
+    RESULT_VARIABLE GENERATE_PROJECT_RESULT
+)
+
+if(NOT GENERATE_PROJECT_RESULT EQUAL 0)
+    message(FATAL_ERROR "Failed to generate base/project.h")
+endif()
+
+message(STATUS "Generated base/project.h")
+
+#-----------------------------------------------------------------
 # Lua Library (bundled)
 #-----------------------------------------------------------------
 
@@ -129,7 +151,7 @@ file(GLOB BASE_SOURCES
 )
 
 add_library(base STATIC ${BASE_SOURCES})
-target_include_directories(base PUBLIC ${BASE_DIR} ${CMAKE_BINARY_DIR})
+target_include_directories(base PUBLIC ${SRC_DIR} ${CMAKE_BINARY_DIR})
 if(FEATURE_LUA)
     target_link_libraries(base PUBLIC lua)
 endif()
@@ -156,9 +178,8 @@ endif()
 
 list(APPEND BGAME_SOURCES ${BGAME_PLATFORM_SOURCES})
 
-add_library(bgame STATIC ${BGAME_SOURCES})
-target_include_directories(bgame PUBLIC ${BGAME_DIR} ${CMAKE_BINARY_DIR} ${SRC_DIR})
-target_link_libraries(bgame PUBLIC base)
+# Note: bgame sources are compiled into each module, not as a separate library
+# Each module defines its own CGAMEDLL, GAMEDLL, or UIDLL flag
 
 #-----------------------------------------------------------------
 # Server Game Module (qagame)
@@ -166,8 +187,7 @@ target_link_libraries(bgame PUBLIC base)
 
 if(BUILD_QAGAME)
     file(GLOB QAGAME_SOURCES
-        "${GAME_DIR}/g_*.c"
-        "${GAME_DIR}/bg_*.c"
+        "${GAME_DIR}/g_*.cpp"
     )
 
     # Platform-specific sources
@@ -190,10 +210,10 @@ if(BUILD_QAGAME)
 
     # Build the module
     build_game_module(qagame
-        SOURCES ${QAGAME_SOURCES} ${QAGAME_OMNIBOT_SOURCES}
+        SOURCES ${QAGAME_SOURCES} ${BGAME_SOURCES} ${QAGAME_OMNIBOT_SOURCES}
         DEFINITIONS GAMEDLL $<$<BOOL:${FEATURE_OMNIBOT}>:FEATURE_OMNIBOT>
-        INCLUDES ${COMMON_INCLUDES} ${GAME_DIR} ${OMNIBOT_DIR}
-        LIBRARIES bgame
+        INCLUDES ${COMMON_INCLUDES} ${GAME_DIR} ${BGAME_DIR} ${UI_DIR} ${OMNIBOT_DIR}
+        LIBRARIES base
     )
 
     # Link platform-specific libraries
@@ -230,10 +250,10 @@ if(BUILD_CGAME)
 
     # Build the module
     build_game_module(cgame
-        SOURCES ${CGAME_SOURCES}
+        SOURCES ${CGAME_SOURCES} ${BGAME_SOURCES}
         DEFINITIONS CGAMEDLL
-        INCLUDES ${COMMON_INCLUDES} ${CGAME_DIR} ${UI_DIR}
-        LIBRARIES bgame
+        INCLUDES ${COMMON_INCLUDES} ${CGAME_DIR} ${BGAME_DIR} ${UI_DIR}
+        LIBRARIES base
     )
 
     # Link platform-specific libraries
@@ -264,10 +284,10 @@ if(BUILD_UI)
 
     # Build the module
     build_game_module(ui
-        SOURCES ${UI_SOURCES}
+        SOURCES ${UI_SOURCES} ${BGAME_SOURCES}
         DEFINITIONS UIDLL
-        INCLUDES ${COMMON_INCLUDES} ${UI_DIR}
-        LIBRARIES bgame
+        INCLUDES ${COMMON_INCLUDES} ${UI_DIR} ${BGAME_DIR}
+        LIBRARIES base
     )
 
     # Link platform-specific libraries
