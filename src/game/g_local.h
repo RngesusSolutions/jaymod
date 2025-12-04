@@ -113,6 +113,24 @@ typedef enum {
 #define	AAS_AREA_TEAM_AXIS_DISGUISED		0x0080
 #define	AAS_AREA_TEAM_ALLIES_DISGUISED		0x0100
 
+// Referee levels
+typedef enum {
+	RL_NONE = 0,
+	RL_REFEREE,
+	RL_RCON
+} refLevelType;
+
+// Server settings flags (bitfield)
+#define CV_SVS_PAUSE			(1 << 0)
+#define CV_SVS_LOCKTEAMS		(1 << 1)
+#define CV_SVS_LOCKSPECS		(1 << 2)
+#define CV_SVS_MUTESPECS		(1 << 3)
+#define CV_SVS_FRIENDLYFIRE		(1 << 4)
+#define CV_SVS_ANTILAG			(1 << 5)
+#define CV_SVS_BALANCEDTEAMS	(1 << 6)
+#define CV_SVS_WARMUPDMG		(1 << 7)
+#define CV_SVS_NEXTMAP			(1 << 8)
+
 //============================================================================
 
 // Jaybird - antiwarp defines
